@@ -1,0 +1,19 @@
+[Unit]
+Description=Jupyter Notebook
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User={{ jupyterhub_user }}
+Group={{ jupyterhub_group }}
+WorkingDirectory={{ jupyterhub_root_path }}
+ExecStart={{ jupyterhub_root_path }}/bin/jupyter notebook --config={{ jupyterhub_home }}/.jupyter/jupyter_notebook_config.py --ip=0.0.0.0 --notebook-dir={{ jupyterhub_notebook_path }}
+Environment="PATH=/bin:/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:{{ jupyterhub_default_conda_path }}/bin"
+Restart=on-failure
+PrivateTmp=yes
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

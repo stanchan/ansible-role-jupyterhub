@@ -1,0 +1,64 @@
+---
+# defaults file for jupyterhub
+systemd_service_dir: /etc/systemd/system
+jupyterhub_service_name: jupyterhub
+
+jupyterhub_python_version: 3.7.2
+jupyterhub_user: jupyter
+jupyterhub_group: jupyter
+jupyterhub_config_path: /etc/jupyterhub
+jupyterhub_home: /home/jupyter
+jupyterhub_root_path: "{{ jupyterhub_home }}"
+jupyterhub_notebook_path: "{{ jupyterhub_home }}/data"
+jupyterhub_sudospawner_bin: "{{ jupyterhub_default_conda_path }}/bin/sudospawner"
+jupyterhub_npm_bin: "{{ jupyterhub_default_conda_path }}/bin/npm"
+
+jupyterhub_fqdn: "{{ ansible_fqdn }}"
+jupyterhub_netif: ansible_eth0
+jupyterhub_external_ip: "{{ hostvars[inventory_hostname][jupyterhub_netif]['ipv4']['address'] }}"
+
+jupyterhub_ssl: yes
+jupyterhub_ssl_key: ''
+jupyterhub_ssl_cert: ''
+jupyterhub_ssl_country: ''
+jupyterhub_ssl_state: ''
+jupyterhub_ssl_city: ''
+jupyterhub_ssl_org: ''
+jupyterhub_org_unit: ''
+
+jupyterhub_configs:
+  c_Authenticator_admin_users:
+    - jupyter
+  c_LocalAuthenticator_create_system_users: True
+  c_JupyterHub_hub_ip: "{{ jupyterhub_external_ip }}"
+  c_JupyterHub_hub_port: 8081
+  c_JupyterHub_ip: "{{ jupyterhub_external_ip }}"
+  c_JupyterHub_port: 8080
+  c_JupyterHub_proxy_api_ip: "{{ jupyterhub_external_ip }}"
+  c_JupyterHub_ssl_cert: '/etc/jupyterhub/server.crt'
+  c_JupyterHub_ssl_key: '/etc/jupyterhub/server.key'
+
+jupyterhub_default_conda_path: "{{ miniconda_env | selectattr('default', 'equalto', true) | map(attribute='path') | list | first }}/conda/miniconda3/envs/{{ miniconda_env | selectattr('default', 'equalto', true) | map(attribute='env') | map(attribute='name') | list | first }}"
+
+miniconda_env:
+  - name: conda
+    path: "{{ jupyterhub_home }}"
+    create_opts: "-q"
+    user: "{{ jupyterhub_user }}"
+    deploy_profile_mode: update
+    default: yes
+    env:
+      name: jupyterhub
+      dependencies:
+        - bokeh
+        - jupyter
+        - jupyterhub
+        - numpy
+        - nodejs
+        - pandas
+        - pip
+        - "python={{ jupyterhub_python_version }}"
+        - sudospawner
+      channels:
+        - defaults
+        - conda-forge

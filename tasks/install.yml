@@ -1,0 +1,30 @@
+---
+# tasks file for jupyterhub
+- name: Check filesystem paths
+  file:
+    dest: "{{ item }}"
+    owner: "{{ jupyterhub_user }}"
+    group: "{{ jupyterhub_group }}"
+    state: directory
+  loop:
+    - "{{ jupyterhub_config_path }}"
+    - "{{ jupyterhub_root_path }}"
+
+- name: Deploy jupyterhub sudospawner sudo file
+  template:
+    src: jupyter.sudo.j2
+    dest: /etc/sudoers.d/jupyter
+    owner: root
+    group: root
+    mode: 0440
+
+- name: Install configurable-http-proxy
+  npm:
+    name: configurable-http-proxy
+    global: yes
+    executable: "{{ jupyterhub_npm_bin }}"
+    state: present
+  environment:
+    PATH: "{{ jupyterhub_default_conda_path }}/bin:{{ ansible_env.PATH }}"
+  become: yes
+  become_user: "{{ jupyterhub_user }}"

@@ -1,0 +1,10 @@
+---
+# tasks file for jupyterhub
+- name: Install jupyterhub
+  include_tasks: install.yml
+
+- name: Configure jupyterhub
+  include_tasks: configure.yml
+
+- name: Setup jupyterhub services
+  include_tasks: service.yml

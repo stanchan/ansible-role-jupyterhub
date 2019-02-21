@@ -1,0 +1,27 @@
+---
+- name: Deploy jupyterhub config file
+  template:
+    src: jupyterhub-config.py.j2
+    dest: /etc/jupyterhub/jupyterhub_config.py
+    owner: root
+    group: root
+    mode: 0440
+
+- name: Check key exists
+  stat:
+    path: /etc/jupyterhub/server.key
+  register: check_key
+
+- name: Check certificate exists
+  stat:
+    path: /etc/jupyterhub/server.crt
+  register: check_cert
+
+- name: Create self-signed SSL cert
+  command: openssl req -new -nodes -x509 -rand /dev/urandom -subj "/C={{ jupyterhub_ssl_country }}/ST={{ jupyterhub_ssl_state }}/L={{ jupyterhub_ssl_city }}/O={{ jupyterhub_ssl_org }}/OU={{ jupyterhub_org_unit }}CN={{ jupyterhub_fqdn }}" -days 3650 -keyout /etc/jupyterhub/server.key -out /etc/jupyterhub/server.crt -extensions v3_ca creates=/etc/jupyterhub/server.crt
+  when:
+    - jupyterhub_ssl == True
+    - check_key.stat.exists == False
+    - check_cert.stat.exists == False
+    - jupyterhub_ssl_key == ''
+    - jupyterhub_ssl_cert == ''

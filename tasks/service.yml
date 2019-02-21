@@ -1,0 +1,17 @@
+---
+- name: Create jupyterhub systemd service
+  template:
+    src: jupyterhub.service.j2
+    dest: "{{ systemd_service_dir }}/{{ jupyterhub_service_name }}.service"
+    owner: root
+    group: root
+    mode: 0755
+  notify:
+    - restart jupyterhub
+
+- name: Start jupyterhub service
+  systemd:
+    name: "{{ jupyterhub_service_name }}"
+    daemon_reload: yes
+    enabled: yes
+    state: started

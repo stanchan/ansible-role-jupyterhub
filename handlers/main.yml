@@ -1,0 +1,7 @@
+---
+# handlers file for jupyterhub
+- name: restart jupyterhub
+  service:
+    name: jupyterhub
+    state: restarted
+

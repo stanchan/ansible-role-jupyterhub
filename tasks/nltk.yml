@@ -1,0 +1,11 @@
+
+---
+# tasks file for jupyterhub
+
+- name: Download nltk data
+  command: '"{{ item.path }}/{{ item.name }}/{{ miniconda_prefix }}/bin/python" -m "nltk.downloader" -d "/usr/local/share/nltk_data" "all"'
+  register: nltk_update
+  when: nltk_update
+  changed_when: '"All requested packages already installed" in miniconda_update'
+  become: yes
+  become_user: "{{ item.user }}"
