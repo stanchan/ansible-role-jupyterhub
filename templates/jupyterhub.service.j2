@@ -9,6 +9,7 @@ User={{ jupyterhub_user }}
 Group={{ jupyterhub_group }}
 WorkingDirectory={{ jupyterhub_root_path }}
 ExecStart={{ jupyterhub_default_conda_path }}/bin/jupyterhub --JupyterHub.spawner_class=sudospawner.SudoSpawner
+Environment="PATH=/bin:/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:{{ jupyterhub_default_conda_path }}/bin"
 Restart=on-failure
 PrivateTmp=yes
 Restart=always
