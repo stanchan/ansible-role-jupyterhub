@@ -1,5 +1,6 @@
 ---
 # defaults file for jupyterhub
+install_caddy: no
 systemd_service_dir: /etc/systemd/system
 jupyterhub_service_name: jupyterhub
 
@@ -7,44 +8,130 @@ jupyterhub_python_version: 3.7.2
 jupyterhub_user: jupyter
 jupyterhub_group: jupyter
 jupyterhub_config_path: /etc/jupyterhub
+jupyterhub_config_file: "{{ jupyterhub_config_path }}/jupyterhub_config.py"
+jupyterhub_log_file: /var/log/jupyterhub.log
 jupyterhub_home: /home/jupyter
 jupyterhub_root_path: "{{ jupyterhub_home }}"
-jupyterhub_notebook_path: "{{ jupyterhub_home }}/data"
+jupyterhub_notebook_path: "~"
+jupyterhub_cookie_secret_file: "{{ jupyterhub_config_path }}/jupyterhub_cookie_secret"
+jupyterhub_data_files_path: "{{ jupyterhub_default_conda_path }}/share/jupyterhub"
 jupyterhub_sudospawner_bin: "{{ jupyterhub_default_conda_path }}/bin/sudospawner"
+jupyterhub_configurable_http_proxy_bin:
+  - "{{ jupyterhub_default_conda_path }}/bin/configurable-http-proxy"
 jupyterhub_npm_bin: "{{ jupyterhub_default_conda_path }}/bin/npm"
+jupyterhub_authenticator_class: jupyterhub.auth.PAMAuthenticator
+jupyterhub_spawner_class: sudospawner.SudoSpawner
+jupyterhub_allow_named_servers: yes
+jupyterhub_create_system_users: no
+jupyterhub_proxy_start: yes
+jupyterhub_debug: no
 
+jupyterhub_scheme: https
 jupyterhub_fqdn: "{{ ansible_fqdn }}"
 jupyterhub_netif: ansible_eth0
 jupyterhub_external_ip: "{{ hostvars[inventory_hostname][jupyterhub_netif]['ipv4']['address'] }}"
+jupyterhub_port: 8001
+jupyterhub_hub_ip: "{{ jupyterhub_external_ip }}"
+jupyterhub_hub_port: 8080
+jupyterhub_proxy_ip: "{{ jupyterhub_external_ip }}"
+jupyterhub_proxy_port: 8000
+jupyterhub_hub_connect_ip: "{{ jupyterhub_external_ip }}"
+jupyterhub_bind_url: "http://0.0.0.0:{{ jupyterhub_port }}"
+jupyterhub_connect_url: "http://{{ jupyterhub_external_ip }}:{{ jupyterhub_port }}"
+jupyterhub_proxy_api_url: "http://0.0.0.0:{{ jupyterhub_proxy_port }}"
+jupyterhub_hub_bind_url: "http://0.0.0.0:{{ jupyterhub_port }}"
+jupyterhub_hub_connect_url: "http://{{ jupyterhub_external_ip }}:{{ jupyterhub_port }}"
+jupyterhub_default_url: /tree/
+
+jupyterhub_caddy_config_template: caddy.yml.j2
 
 jupyterhub_ssl: yes
-jupyterhub_ssl_key: ''
-jupyterhub_ssl_cert: ''
-jupyterhub_ssl_country: ''
-jupyterhub_ssl_state: ''
-jupyterhub_ssl_city: ''
-jupyterhub_ssl_org: ''
-jupyterhub_org_unit: ''
+jupyterhub_ssl_key: ""
+jupyterhub_ssl_key_file: /etc/jupyterhub/server.key
+jupyterhub_ssl_cert: ""
+jupyterhub_ssl_cert_file: /etc/jupyterhub/server.crt
+jupyterhub_ssl_country: ""
+jupyterhub_ssl_state: ""
+jupyterhub_ssl_city: ""
+jupyterhub_ssl_org: ""
+jupyterhub_org_unit: ""
+
+jupyterhub_delete_invalid_users: no
+jupyterhub_admin_users:
+  - jupyter
+
+jupyterhub_whitelist_users:
+  - jupyter
 
 jupyterhub_configs:
-  c_Authenticator_admin_users:
-    - jupyter
-  c_LocalAuthenticator_create_system_users: True
-  c_JupyterHub_hub_ip: "{{ jupyterhub_external_ip }}"
-  c_JupyterHub_hub_port: 8081
-  c_JupyterHub_ip: "{{ jupyterhub_external_ip }}"
-  c_JupyterHub_port: 8080
-  c_JupyterHub_proxy_api_ip: "{{ jupyterhub_external_ip }}"
-  c_JupyterHub_ssl_cert: '/etc/jupyterhub/server.crt'
-  c_JupyterHub_ssl_key: '/etc/jupyterhub/server.key'
+  JupyterHub_allow_named_servers: "{{ jupyterhub_allow_named_servers }}"
+  JupyterHub_authenticator_class: "{{ jupyterhub_authenticator_class }}"
+  JupyterHub_bind_url: "{{ jupyterhub_bind_url }}"
+  JupyterHub_cookie_secret_file: "{{ jupyterhub_cookie_secret_file }}"
+  JupyterHub_data_files_path: "{{ jupyterhub_data_files_path }}"
+  JupyterHub_spawner_class: "{{ jupyterhub_spawner_class }}"
+  JupyterHub_ssl_cert: "{{ jupyterhub_ssl_cert_file }}"
+  JupyterHub_ssl_key: "{{ jupyterhub_ssl_key_file }}"
+  Spawner_default_url: "{{ jupyterhub_default_url }}"
+  Spawner_notebook_dir: "{{ jupyterhub_notebook_path }}"
+  Authenticator_admin_users: "{{ jupyterhub_admin_users }}"
+  Authenticator_whitelist: "{{ jupyterhub_whitelist_users }}"
+  Authenticator_delete_invalid_users: "{{ jupyterhub_delete_invalid_users }}"
+  LocalAuthenticator_create_system_users: "{{ jupyterhub_create_system_users }}"
+  SudoSpawner_sudospawner_path: "{{ jupyterhub_sudospawner_bin }}"
+  ConfigurableHTTPProxy_should_start: "{{ jupyterhub_proxy_start }}"
+  ConfigurableHTTPProxy_api_url: "{{ jupyterhub_proxy_api_url }}"
+  ConfigurableHTTPProxy_auth_token: "{{ jupyterhub_proxy_auth_token }}"
+  ConfigurableHTTPProxy_command: "{{ jupyterhub_configurable_http_proxy_bin }}"
+
+# jupyterhub_configs:
+#   JupyterHub_authenticator_class: "{{ jupyterhub_authenticator_class }}"
+#   JupyterHub_bind_url: "{{ jupyterhub_bind_url }}"
+#   JupyterHub_cookie_secret_file: "{{ jupyterhub_cookie_secret_file }}"
+#   JupyterHub_data_files_path: "{{ jupyterhub_data_files_path }}"
+#   JupyterHub_hub_bind_url: "{{ jupyterhub_hub_bind_url }}"
+#   JupyterHub_hub_connect_url: "{{ jupyterhub_hub_connect_url }}"
+#   JupyterHub_spawner_class: "{{ jupyterhub_spawner_class }}"
+#   JupyterHub_ssl_cert: "{{ jupyterhub_ssl_cert_file }}"
+#   JupyterHub_ssl_key: "{{ jupyterhub_ssl_key_file }}"
+#   Spawner_default_url: "{{ jupyterhub_default_url }}"
+#   Spawner_notebook_dir: "{{ jupyterhub_notebook_path }}"
+#   Authenticator_admin_users: "{{ jupyterhub_admin_users }}"
+#   Authenticator_whitelist: "{{ jupyterhub_whitelist_users }}"
+#   Authenticator_delete_invalid_users: "{{ jupyterhub_delete_invalid_users }}"
+#   LocalAuthenticator_create_system_users: "{{ jupyterhub_create_system_users }}"
+#   SudoSpawner_sudospawner_path: "{{ jupyterhub_sudospawner_bin }}"
+#   ConfigurableHTTPProxy_should_start: "{{ jupyterhub_proxy_start }}"
+#   ConfigurableHTTPProxy_api_url: "{{ jupyterhub_proxy_api_url }}"
+#   ConfigurableHTTPProxy_auth_token: "{{ jupyterhub_proxy_auth_token }}"
+#   ConfigurableHTTPProxy_command: "{{ jupyterhub_configurable_http_proxy_bin }}"
 
 jupyterhub_default_conda_path: "{{ miniconda_env | selectattr('default', 'equalto', true) | map(attribute='path') | list | first }}/conda/miniconda3/envs/{{ miniconda_env | selectattr('default', 'equalto', true) | map(attribute='env') | map(attribute='name') | list | first }}"
+
+miniconda_manage_dependencies: yes
+miniconda_manage_groups: yes
+miniconda_manage_users: yes
+
+miniconda_create_groups:
+  - name: "{{ jupyterhub_group }}"
+    system: yes
+
+miniconda_create_users:
+  - name: "{{ jupyterhub_user }}"
+    group: "{{ jupyterhub_group }}"
+    groups: "{{ jupyterhub_group }},shadow"
+    shell: /usr/sbin/nologin
+    home: "{{ jupyterhub_home }}"
+    createhome: yes
+    comment: "{{ jupyterhub_user }} service account"
+    system: yes
 
 miniconda_env:
   - name: conda
     path: "{{ jupyterhub_home }}"
     create_opts: "-q"
     user: "{{ jupyterhub_user }}"
+    group: "{{ jupyterhub_group }}"
     deploy_profile_mode: update
     default: yes
     env:
@@ -59,6 +146,9 @@ miniconda_env:
         - pip
         - "python={{ jupyterhub_python_version }}"
         - sudospawner
+        - pip:
+          - jupyterhub-systemdspawner
+          - oauthenticator
       channels:
         - defaults
         - conda-forge

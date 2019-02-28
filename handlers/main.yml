@@ -5,3 +5,7 @@
     name: jupyterhub
     state: restarted
 
+- name: restart caddy
+  service:
+    name: caddy
+    state: restarted

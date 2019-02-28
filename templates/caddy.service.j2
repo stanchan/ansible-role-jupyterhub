@@ -1,20 +1,21 @@
 [Unit]
-Description=Jupyter Notebook
+Description=Caddy Service
 Requires=network-online.target
 After=network-online.target
 
 [Service]
 Type=simple
-User={{ jupyterhub_user }}
-Group={{ jupyterhub_group }}
-WorkingDirectory={{ jupyterhub_root_path }}
-ExecStart={{ jupyterhub_default_conda_path }}/bin/jupyterhub -f {{ jupyterhub_config_file }} --log-file {{ jupyterhub_log_file }} {% if jupyterhub_debug %} --debug
-{% endif %}
+User=root
+Group=root
+WorkingDirectory=/opt/caddy
+ExecStart=/opt/caddy/bin/caddy --conf /etc/caddy/Caddyfile --log stdout --agree=false
 Environment="PATH=/bin:/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:{{ jupyterhub_default_conda_path }}/bin"
 Restart=on-failure
 PrivateTmp=yes
 Restart=always
 RestartSec=10
+LimitNOFILE=65356
+LimitNPROC=65356
 
 [Install]
 WantedBy=multi-user.target

@@ -6,6 +6,7 @@
     owner: "{{ jupyterhub_user }}"
     group: "{{ jupyterhub_group }}"
     state: directory
+    recurse: yes
   loop:
     - "{{ jupyterhub_config_path }}"
     - "{{ jupyterhub_root_path }}"
@@ -17,6 +18,7 @@
     owner: root
     group: root
     mode: 0440
+  notify: restart jupyterhub
 
 - name: Install configurable-http-proxy
   npm:
