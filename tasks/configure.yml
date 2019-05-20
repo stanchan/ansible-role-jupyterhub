@@ -19,7 +19,6 @@
     creates: "{{ jupyterhub_ssl_cert_file }}"
   notify:
     - Restart jupyterhub
-    - Update cookie secret file
 
 - name: Update cookie secret file
   file:
