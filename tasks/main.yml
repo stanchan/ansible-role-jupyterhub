@@ -8,7 +8,3 @@
 
 - name: Setup jupyterhub services
   include_tasks: service.yml
-
-- name: Install caddy
-  include_tasks: caddy.yml
-  when: install_caddy
