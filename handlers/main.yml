@@ -1,11 +1,6 @@
 ---
 # handlers file for jupyterhub
-- name: restart jupyterhub
+- name: Restart jupyterhub
   service:
     name: jupyterhub
-    state: restarted
-
-- name: restart caddy
-  service:
-    name: caddy
     state: restarted

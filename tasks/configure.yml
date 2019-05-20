@@ -6,7 +6,7 @@
     owner: "{{ jupyterhub_user }}"
     group: "{{ jupyterhub_group }}"
     mode: 0600
-  notify: restart jupyterhub
+  notify: Restart jupyterhub
 
 - name: Check cookie secret exists
   stat:
@@ -17,15 +17,16 @@
   shell: 'openssl rand -hex 32 > "{{ jupyterhub_cookie_secret_file }}"'
   args:
     creates: "{{ jupyterhub_ssl_cert_file }}"
-  notify: restart jupyterhub
+  notify:
+    - Restart jupyterhub
+    - Update cookie secret file
 
-- name: Write cookie secret file
+- name: Update cookie secret file
   file:
-    dest: "{{ jupyterhub_cookie_secret_file }}"
+    path: "{{ jupyterhub_cookie_secret_file }}"
     owner: "{{ jupyterhub_user }}"
     group: "{{ jupyterhub_group }}"
     mode: 0600
-  when: check_cookie_secret.stat.exists
 
 - name: Check key file exists
   stat:
@@ -38,15 +39,15 @@
   register: check_cert
 
 - name: Create self-signed SSL cert
-  command: 'openssl req -new -nodes -x509 -rand /dev/urandom -subj "/C={{ jupyterhub_ssl_country }}/ST={{ jupyterhub_ssl_state }}/L={{ jupyterhub_ssl_city }}/O={{ jupyterhub_ssl_org }}/OU={{ jupyterhub_org_unit }}CN={{ jupyterhub_fqdn }}" -days 3650 -keyout {{ jupyterhub_ssl_key_file }} -out {{ jupyterhub_ssl_cert_file }} -extensions v3_ca'
+  shell: 'openssl req -new -nodes -x509 -rand /dev/urandom -config ${CONFIG} -subj "/C=${country}/ST=${state}/L=${city}/O=${org}/OU=${unit}/CN=${fqdn}/emailAddress=${email}" -sha${hash} -days ${expire} -keyout {{ jupyterhub_ssl_key_file }} -out {{ jupyterhub_ssl_cert_file }}'
   args:
     creates: "{{ jupyterhub_ssl_cert_file }}"
   when:
     - jupyterhub_ssl == True
     - check_key.stat.exists == False
     - check_cert.stat.exists == False
-    - jupyterhub_ssl_key == ''
-    - jupyterhub_ssl_cert == ''
+    - jupyterhub_ssl_key == ""
+    - jupyterhub_ssl_cert == ""
 
 - name: Deploy SSL key
   copy:
@@ -55,8 +56,10 @@
     owner: "{{ jupyterhub_user }}"
     group: "{{ jupyterhub_group }}"
     mode: 0600
-  when: jupyterhub_ssl_key != ''
-  notify: restart jupyterhub
+  when:
+    - jupyterhub_ssl_key != ""
+    - jupyterhub_ssl == True
+  notify: Restart jupyterhub
 
 - name: Deploy SSL cert
   copy:
@@ -65,5 +68,7 @@
     owner: "{{ jupyterhub_user }}"
     group: "{{ jupyterhub_group }}"
     mode: 0600
-  when: jupyterhub_ssl_cert != ''
-  notify: restart jupyterhub
+  when:
+    - jupyterhub_ssl_cert != ""
+    - jupyterhub_ssl == True
+  notify: Restart jupyterhub

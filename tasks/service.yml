@@ -6,8 +6,7 @@
     owner: root
     group: root
     mode: 0755
-  notify:
-    - restart jupyterhub
+  notify: Restart jupyterhub
 
 - name: Start jupyterhub service
   systemd:

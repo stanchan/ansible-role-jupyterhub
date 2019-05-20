@@ -18,7 +18,7 @@
     owner: root
     group: root
     mode: 0440
-  notify: restart jupyterhub
+  notify: Restart jupyterhub
 
 - name: Install configurable-http-proxy
   npm:

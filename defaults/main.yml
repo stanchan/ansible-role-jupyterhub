@@ -44,17 +44,17 @@ jupyterhub_hub_connect_url: "http://{{ jupyterhub_external_ip }}:{{ jupyterhub_p
 jupyterhub_default_url: /tree/
 
 jupyterhub_caddy_config_template: caddy.yml.j2
-
+jypyterhub_ssl_gen_configs:
+  country: ""
+  state: ""
+  city: ""
+  org: ""
+  unit: ""
 jupyterhub_ssl: yes
 jupyterhub_ssl_key: ""
 jupyterhub_ssl_key_file: /etc/jupyterhub/server.key
 jupyterhub_ssl_cert: ""
 jupyterhub_ssl_cert_file: /etc/jupyterhub/server.crt
-jupyterhub_ssl_country: ""
-jupyterhub_ssl_state: ""
-jupyterhub_ssl_city: ""
-jupyterhub_ssl_org: ""
-jupyterhub_org_unit: ""
 
 jupyterhub_delete_invalid_users: no
 jupyterhub_admin_users:
@@ -152,3 +152,5 @@ miniconda_env:
       channels:
         - defaults
         - conda-forge
+
+caddy_path: /bin:/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:{{ jupyterhub_default_conda_path }}/bin
