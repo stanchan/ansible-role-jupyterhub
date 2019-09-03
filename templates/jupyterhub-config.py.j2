@@ -490,7 +490,7 @@ c.JupyterHub.ssl_key = '{{ jupyterhub_configs.JupyterHub_ssl_key }}'
 #  environment variables here. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
 {% if jupyterhub_configs.Spawner_args is defined %}
-c.Spawner.args = '{{ jupyterhub_configs.Spawner_args }}'
+c.Spawner.args = {{ jupyterhub_configs.Spawner_args }}
 {% else %}
 #c.Spawner.args = []
 {% endif %}
