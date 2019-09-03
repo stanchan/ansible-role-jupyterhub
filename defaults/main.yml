@@ -4,7 +4,7 @@ install_caddy: no
 systemd_service_dir: /etc/systemd/system
 jupyterhub_service_name: jupyterhub
 
-jupyterhub_python_version: 3.7.2
+jupyterhub_python_version: 3.7.4
 jupyterhub_user: jupyter
 jupyterhub_group: jupyter
 jupyterhub_config_path: /etc/jupyterhub
@@ -43,13 +43,15 @@ jupyterhub_hub_bind_url: "http://0.0.0.0:{{ jupyterhub_port }}"
 jupyterhub_hub_connect_url: "http://{{ jupyterhub_external_ip }}:{{ jupyterhub_port }}"
 jupyterhub_default_url: /tree/
 
-jupyterhub_caddy_config_template: caddy.yml.j2
 jypyterhub_ssl_gen_configs:
-  country: ""
-  state: ""
-  city: ""
-  org: ""
-  unit: ""
+  country: US
+  state: CA
+  city: San Francisco
+  org: Engineering
+  unit: Development
+  email: admin@shift-labs.com
+  hash: 256
+  expire: 365
 jupyterhub_ssl: yes
 jupyterhub_ssl_key: ""
 jupyterhub_ssl_key_file: /etc/jupyterhub/server.key

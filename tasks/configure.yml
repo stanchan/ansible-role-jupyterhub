@@ -38,7 +38,7 @@
   register: check_cert
 
 - name: Create self-signed SSL cert
-  shell: 'openssl req -new -nodes -x509 -rand /dev/urandom -config ${CONFIG} -subj "/C=${country}/ST=${state}/L=${city}/O=${org}/OU=${unit}/CN=${fqdn}/emailAddress=${email}" -sha${hash} -days ${expire} -keyout {{ jupyterhub_ssl_key_file }} -out {{ jupyterhub_ssl_cert_file }}'
+  shell: 'openssl req -new -newkey rsa:4096 -nodes -x509 -rand /dev/urandom -sha{{ jypyterhub_ssl_gen_configs.hash }} -days {{ jypyterhub_ssl_gen_configs.expire }} -subj "/C={{ jypyterhub_ssl_gen_configs.country }}/ST={{ jypyterhub_ssl_gen_configs.state }}/L={{ jypyterhub_ssl_gen_configs.city }}/O={{ jypyterhub_ssl_gen_configs.org }}/OU={{ jypyterhub_ssl_gen_configs.unit }}/CN={{ caddy_ssl_common_name }}/emailAddress={{ jypyterhub_ssl_gen_configs.email }}" -keyout {{ jupyterhub_ssl_key_file }} -out {{ jupyterhub_ssl_cert_file }}'
   args:
     creates: "{{ jupyterhub_ssl_cert_file }}"
   when:
