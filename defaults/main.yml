@@ -12,7 +12,6 @@ jupyterhub_config_file: "{{ jupyterhub_config_path }}/jupyterhub_config.py"
 jupyterhub_log_file: /var/log/jupyterhub.log
 jupyterhub_home: /home/jupyter
 jupyterhub_root_path: "{{ jupyterhub_home }}"
-jupyterhub_notebook_path: "~"
 jupyterhub_cookie_secret_file: "{{ jupyterhub_config_path }}/jupyterhub_cookie_secret"
 jupyterhub_data_files_path: "{{ jupyterhub_default_conda_path }}/share/jupyterhub"
 jupyterhub_sudospawner_bin: "{{ jupyterhub_default_conda_path }}/bin/sudospawner"
@@ -30,18 +29,22 @@ jupyterhub_scheme: https
 jupyterhub_fqdn: "{{ ansible_fqdn }}"
 jupyterhub_netif: ansible_eth0
 jupyterhub_external_ip: "{{ hostvars[inventory_hostname][jupyterhub_netif]['ipv4']['address'] }}"
-jupyterhub_port: 8001
-jupyterhub_hub_ip: "{{ jupyterhub_external_ip }}"
-jupyterhub_hub_port: 8080
+jupyterhub_port: 8081
+jupyterhub_hub_ip: '0.0.0.0'
+jupyterhub_hub_port: null
 jupyterhub_proxy_ip: "{{ jupyterhub_external_ip }}"
 jupyterhub_proxy_port: 8000
-jupyterhub_hub_connect_ip: "{{ jupyterhub_external_ip }}"
-jupyterhub_bind_url: "http://0.0.0.0:{{ jupyterhub_port }}"
+jupyterhub_proxy_api_port: 8001
+jupyterhub_hub_connect_ip: null
+jupyterhub_bind_url: "http://0.0.0.0:{{ jupyterhub_proxy_port }}"
 jupyterhub_connect_url: "http://{{ jupyterhub_external_ip }}:{{ jupyterhub_port }}"
-jupyterhub_proxy_api_url: "http://0.0.0.0:{{ jupyterhub_proxy_port }}"
+jupyterhub_proxy_url: "http://{{ jupyterhub_external_ip }}:{{ jupyterhub_proxy_port }}"
+jupyterhub_proxy_api_url: "http://{{ jupyterhub_external_ip }}:{{ jupyterhub_proxy_api_port }}"
 jupyterhub_hub_bind_url: "http://0.0.0.0:{{ jupyterhub_port }}"
 jupyterhub_hub_connect_url: "http://{{ jupyterhub_external_ip }}:{{ jupyterhub_port }}"
-jupyterhub_default_url: /tree/
+jupyterhub_spawner_ip: "{{ jupyterhub_external_ip }}"
+jupyterhub_spawner_default_url: /tree/
+jupyterhub_spawner_notebook_dir: "~"
 
 jypyterhub_ssl_gen_configs:
   country: US
@@ -52,7 +55,7 @@ jypyterhub_ssl_gen_configs:
   email: admin@shift-labs.com
   hash: 256
   expire: 365
-jupyterhub_ssl: yes
+jupyterhub_ssl: no
 jupyterhub_ssl_key: ""
 jupyterhub_ssl_key_file: /etc/jupyterhub/server.key
 jupyterhub_ssl_cert: ""
@@ -71,11 +74,13 @@ jupyterhub_configs:
   JupyterHub_bind_url: "{{ jupyterhub_bind_url }}"
   JupyterHub_cookie_secret_file: "{{ jupyterhub_cookie_secret_file }}"
   JupyterHub_data_files_path: "{{ jupyterhub_data_files_path }}"
+  JupyterHub_hub_ip: "{{ jupyterhub_hub_ip }}"
   JupyterHub_spawner_class: "{{ jupyterhub_spawner_class }}"
   JupyterHub_ssl_cert: "{{ jupyterhub_ssl_cert_file }}"
   JupyterHub_ssl_key: "{{ jupyterhub_ssl_key_file }}"
-  Spawner_default_url: "{{ jupyterhub_default_url }}"
-  Spawner_notebook_dir: "{{ jupyterhub_notebook_path }}"
+  Spawner_ip: "{{ jupyterhub_spawner_ip }}"
+  Spawner_default_url: "{{ jupyterhub_spawner_default_url }}"
+  Spawner_notebook_dir: "{{ jupyterhub_spawner_notebook_dir }}"
   Authenticator_admin_users: "{{ jupyterhub_admin_users }}"
   Authenticator_whitelist: "{{ jupyterhub_whitelist_users }}"
   Authenticator_delete_invalid_users: "{{ jupyterhub_delete_invalid_users }}"
@@ -93,11 +98,13 @@ jupyterhub_configs:
 #   JupyterHub_data_files_path: "{{ jupyterhub_data_files_path }}"
 #   JupyterHub_hub_bind_url: "{{ jupyterhub_hub_bind_url }}"
 #   JupyterHub_hub_connect_url: "{{ jupyterhub_hub_connect_url }}"
+#   JupyterHub_hub_ip: "{{ jupyterhub_hub_ip }}"
 #   JupyterHub_spawner_class: "{{ jupyterhub_spawner_class }}"
 #   JupyterHub_ssl_cert: "{{ jupyterhub_ssl_cert_file }}"
 #   JupyterHub_ssl_key: "{{ jupyterhub_ssl_key_file }}"
-#   Spawner_default_url: "{{ jupyterhub_default_url }}"
-#   Spawner_notebook_dir: "{{ jupyterhub_notebook_path }}"
+#   Spawner_ip: "{{ jupyterhub_spawner_ip }}"
+#   Spawner_default_url: "{{ jupyterhub_spawner_default_url }}"
+#   Spawner_notebook_dir: "{{ jupyterhub_spawner_notebook_dir }}"
 #   Authenticator_admin_users: "{{ jupyterhub_admin_users }}"
 #   Authenticator_whitelist: "{{ jupyterhub_whitelist_users }}"
 #   Authenticator_delete_invalid_users: "{{ jupyterhub_delete_invalid_users }}"

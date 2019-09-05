@@ -325,7 +325,7 @@ c.JupyterHub.hub_port = {{ jupyterhub_configs.JupyterHub_hub_port }}
 ## Specify path to a logo image to override the Jupyter logo in the banner.
 #c.JupyterHub.logo_file = ''
 
-## File to write PID Useful for daemonizing jupyterhub.
+## File to write PID Useful for daemonizing JupyterHub.
 #c.JupyterHub.pid_file = ''
 
 ## The public facing port of the proxy.
@@ -403,12 +403,20 @@ c.JupyterHub.spawner_class = '{{ jupyterhub_configs.JupyterHub_spawner_class }}'
 ## Path to SSL certificate file for the public facing interface of the proxy
 #
 #  When setting this, you should also set ssl_key
+{% if jupyterhub_ssl %}
 c.JupyterHub.ssl_cert = '{{ jupyterhub_configs.JupyterHub_ssl_cert }}'
+{% else %}
+#c.JupyterHub.ssl_cert = ''
+{% endif %}
 
 ## Path to SSL key file for the public facing interface of the proxy
 #
 #  When setting this, you should also set ssl_cert
+{% if jupyterhub_ssl %}
 c.JupyterHub.ssl_key = '{{ jupyterhub_configs.JupyterHub_ssl_key }}'
+{% else %}
+#c.JupyterHub.ssl_key = ''
+{% endif %}
 
 ## Host to send statsd metrics to. An empty string (the default) disables sending
 #  metrics.
@@ -611,7 +619,11 @@ c.Spawner.default_url = '{{ jupyterhub_configs.Spawner_default_url | d("") }}'
 #
 #  The JupyterHub proxy implementation should be able to send packets to this
 #  interface.
+{% if jupyterhub_configs.Spawner_ip is defined %}
+c.Spawner.ip = '{{ jupyterhub_configs.Spawner_ip }}'
+{% else %}
 #c.Spawner.ip = ''
+{% endif %}
 
 ## Minimum number of bytes a single-user notebook server is guaranteed to have
 #  available.
@@ -1010,7 +1022,7 @@ c.SystemdSpawner.user_workingdir = '{{ jupyterhub_configs.SystemdSpawner_user_wo
 c.SystemdSpawner.default_shell = '{{ jupyterhub_configs.SystemdSpawner_default_shell }}'
 {% endif %}
 {% if jupyterhub_configs.SystemdSpawner_extra_paths is defined %}
-c.SystemdSpawner.extra_paths = '{{ jupyterhub_configs.SystemdSpawner_extra_paths }}'
+c.SystemdSpawner.extra_paths = {{ jupyterhub_configs.SystemdSpawner_extra_paths }}
 {% endif %}
 {% if jupyterhub_configs.SystemdSpawner_unit_name_template is defined %}
 c.SystemdSpawner.unit_name_template = '{{ jupyterhub_configs.SystemdSpawner_unit_name_template }}'
