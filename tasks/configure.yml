@@ -2,7 +2,16 @@
 - name: Deploy jupyterhub config file
   template:
     src: jupyterhub-config.py.j2
-    dest: /etc/jupyterhub/jupyterhub_config.py
+    dest: "{{ jupyterhub_config_file }}"
+    owner: "{{ jupyterhub_user }}"
+    group: "{{ jupyterhub_group }}"
+    mode: 0600
+  notify: Restart jupyterhub
+
+- name: Deploy default jupyter config file
+  template:
+    src: jupyter-notebook-config.py.j2
+    dest: "{{ jupyterhub_notebook_config_file }}"
     owner: "{{ jupyterhub_user }}"
     group: "{{ jupyterhub_group }}"
     mode: 0600

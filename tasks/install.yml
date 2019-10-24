@@ -9,6 +9,7 @@
     recurse: yes
   loop:
     - "{{ jupyterhub_config_path }}"
+    - "{{ jupyterhub_notebook_config_path }}"
     - "{{ jupyterhub_root_path }}"
 
 - name: Deploy jupyterhub sudospawner sudo file

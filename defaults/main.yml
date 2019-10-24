@@ -8,7 +8,9 @@ jupyterhub_python_version: 3.7.4
 jupyterhub_user: jupyter
 jupyterhub_group: jupyter
 jupyterhub_config_path: /etc/jupyterhub
+jupyterhub_notebook_config_path: /etc/jupyter
 jupyterhub_config_file: "{{ jupyterhub_config_path }}/jupyterhub_config.py"
+jupyterhub_notebook_config_file: "{{ jupyterhub_notebook_config_path }}/jupyter-notebook-config.py"
 jupyterhub_log_file: /var/log/jupyterhub.log
 jupyterhub_home: /home/jupyter
 jupyterhub_root_path: "{{ jupyterhub_home }}"
@@ -21,6 +23,7 @@ jupyterhub_npm_bin: "{{ jupyterhub_default_conda_path }}/bin/npm"
 jupyterhub_authenticator_class: jupyterhub.auth.PAMAuthenticator
 jupyterhub_spawner_class: sudospawner.SudoSpawner
 jupyterhub_allow_named_servers: yes
+jupyterhub_named_server_limit_per_user: 5
 jupyterhub_create_system_users: no
 jupyterhub_proxy_start: yes
 jupyterhub_debug: no
@@ -43,7 +46,7 @@ jupyterhub_proxy_api_url: "http://{{ jupyterhub_external_ip }}:{{ jupyterhub_pro
 jupyterhub_hub_bind_url: "http://0.0.0.0:{{ jupyterhub_port }}"
 jupyterhub_hub_connect_url: "http://{{ jupyterhub_external_ip }}:{{ jupyterhub_port }}"
 jupyterhub_spawner_ip: "{{ jupyterhub_external_ip }}"
-jupyterhub_spawner_default_url: /tree/
+jupyterhub_spawner_default_url: /lab
 jupyterhub_spawner_notebook_dir: "~"
 
 jypyterhub_ssl_gen_configs:
@@ -70,6 +73,7 @@ jupyterhub_whitelist_users:
 
 jupyterhub_configs:
   JupyterHub_allow_named_servers: "{{ jupyterhub_allow_named_servers }}"
+  JupyterHub_named_server_limit_per_user: "{{ jupyterhub_named_server_limit_per_user }}"
   JupyterHub_authenticator_class: "{{ jupyterhub_authenticator_class }}"
   JupyterHub_bind_url: "{{ jupyterhub_bind_url }}"
   JupyterHub_cookie_secret_file: "{{ jupyterhub_cookie_secret_file }}"

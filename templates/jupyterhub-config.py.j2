@@ -55,6 +55,7 @@ c.Application.log_level = {{ jupyterhub_configs.Application_log_level | d(30) }}
 ## Allow named single-user servers per user
 {% if jupyterhub_configs.JupyterHub_allow_named_servers is defined %}
 c.JupyterHub.allow_named_servers = {{ jupyterhub_configs.JupyterHub_allow_named_servers }}
+c.JupyterHub.named_server_limit_per_user = {{ jupyterhub_configs.JupyterHub_named_server_limit_per_user | d(5) }}
 {% else %}
 #c.JupyterHub.allow_named_servers = False
 {% endif %}
@@ -514,7 +515,11 @@ c.Spawner.args = {{ jupyterhub_configs.Spawner_args }}
 #  Some spawners allow shell-style expansion here, allowing you to use
 #  environment variables. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
+{% if jupyterhub_configs.Spawner_cmd is defined %}
+c.Spawner.cmd = {{ jupyterhub_configs.Spawner_cmd }}
+{% else %}
 #c.Spawner.cmd = ['jupyterhub-singleuser']
+{% endif %}
 
 ## Maximum number of consecutive failures to allow before shutting down
 #  JupyterHub.
@@ -1028,13 +1033,13 @@ c.SystemdSpawner.extra_paths = {{ jupyterhub_configs.SystemdSpawner_extra_paths 
 c.SystemdSpawner.unit_name_template = '{{ jupyterhub_configs.SystemdSpawner_unit_name_template }}'
 {% endif %}
 {% if jupyterhub_configs.SystemdSpawner_isolate_tmp is defined %}
-c.SystemdSpawner.isolate_tmp = '{{ jupyterhub_configs.SystemdSpawner_isolate_tmp }}'
+c.SystemdSpawner.isolate_tmp = {{ jupyterhub_configs.SystemdSpawner_isolate_tmp }}
 {% endif %}
 {% if jupyterhub_configs.SystemdSpawner_isolate_devices is defined %}
-c.SystemdSpawner.isolate_devices = '{{ jupyterhub_configs.SystemdSpawner_isolate_devices }}'
+c.SystemdSpawner.isolate_devices = {{ jupyterhub_configs.SystemdSpawner_isolate_devices }}
 {% endif %}
 {% if jupyterhub_configs.SystemdSpawner_disable_user_sudo is defined %}
-c.SystemdSpawner.disable_user_sudo = '{{ jupyterhub_configs.SystemdSpawner_disable_user_sudo }}'
+c.SystemdSpawner.disable_user_sudo = {{ jupyterhub_configs.SystemdSpawner_disable_user_sudo }}
 {% endif %}
 {% if jupyterhub_configs.SystemdSpawner_readonly_paths is defined %}
 c.SystemdSpawner.readonly_paths = '{{ jupyterhub_configs.SystemdSpawner_readonly_paths }}'
